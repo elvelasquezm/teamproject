@@ -11,6 +11,7 @@ public class player {
 	public int player_no;
 	public int terr_owned = 0;
 	String playerName = new String("");
+	int unplacedArmies;
 	int num_of_dice_rolls;
 	int num_of_armies;
 	int num_of_cards;
@@ -43,6 +44,7 @@ public class player {
 		System.out.print("Player " + this.player_no + " please enter your name: ");
 		Scanner in = new Scanner(System.in);
 		this.playerName = in.nextLine();
+		this.unplacedArmies = numArmies;
     }
 	////////////////////////////////////////
 	
@@ -53,11 +55,19 @@ public class player {
 	public int getplayernumber() {
 		return this.player_no;
 	}
+
+	public void reduceUnplacedArmies(){
+		this.unplacedArmies--;
+	}
+
+	public int getUnplacedArmies(){
+		return this.unplacedArmies;
+	}
 	
 	public String getPlayerName(){
 		return this.playerName;
 	}
-	
+
 	//territories
 	public void setnumofterritories(int n) {
 		this.terr_owned = n;
