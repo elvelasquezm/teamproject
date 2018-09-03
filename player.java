@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * Player class has lots of methods. lol
@@ -9,6 +10,7 @@ public class player {
 
 	public int player_no;
 	public int terr_owned = 0;
+	String playerName = new String("");
 	int num_of_dice_rolls;
 	int num_of_armies;
 	int num_of_cards;
@@ -30,11 +32,17 @@ public class player {
 	
 	//////////CONSTRUCTORS//////////////////
 	public player(int num) {
-        this.player_no = num;
+		this.player_no = num;
+		System.out.print("Player " + this.player_no + " please enter your name: ");
+		Scanner in = new Scanner(System.in);
+		this.playerName = in.nextLine();
     }
 	public player(int num, int numArmies) {
         this.player_no = num;
-        this.num_of_armies = numArmies;
+		this.num_of_armies = numArmies;
+		System.out.print("Player " + this.player_no + " please enter your name: ");
+		Scanner in = new Scanner(System.in);
+		this.playerName = in.nextLine();
     }
 	////////////////////////////////////////
 	
@@ -44,6 +52,10 @@ public class player {
 	 */
 	public int getplayernumber() {
 		return this.player_no;
+	}
+	
+	public String getPlayerName(){
+		return this.playerName;
 	}
 	
 	//territories

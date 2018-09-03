@@ -152,7 +152,7 @@ public class Risk_Game {
 		TimeUnit.SECONDS.sleep(3);
 		System.out.print("\nThe order of play is: ");
 		for(int x = 0; x < players; x++) {
-			System.out.print(playerOrder.get(x).getplayernumber() + " ");
+			System.out.print(playerOrder.get(x).getPlayerName() + " ");
 		}
 
 		System.out.println("\n");
