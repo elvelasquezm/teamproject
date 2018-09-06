@@ -11,7 +11,7 @@ import java.io.InputStreamReader;
 import java.util.Scanner;
 
 /**
- * @author Derrick Ellis, Ezekiel , Jason
+ * @author Derrick Ellis, Jason
  *
  */
 
@@ -22,38 +22,27 @@ import java.util.Scanner;
  */ 
 public class Risk_Game {
 	public static final int numOfTerritories = 42;
+	public static List<String> playersN = new ArrayList<String>();
 	/**
 	 * @return 
 	 * 			
 	 * @param 
-	 * @param  
-	 * 			
-	 * 			
+	 * @param  		
 	 * @param 
+	 * @throws
 	 * 			
 	 * 			
 	 */
-
-	/*@ requires 
-	@ ensures 
-	@
-	@ requires 
-	@ ensures 
-	@*/
-
-	/**
-	 * MAIN METHOD
-	 * 
-	 */ 
 	public static void main(String[] args) throws Exception{
 
 		//ESTABLISH MAIN VARIABLES
-		String num_of_players;
+		String numOfPlayers;
 		int players = 0;
 		boolean valid = true;
 		territory[] tList = new territory[numOfTerritories]; //list of all territories
+		List<String> playerNames = new ArrayList<String>();
 
-		//START GAME. PROMPT USER FOR NUMBER OF PLAYERS
+		//*****************START GAME. PROMPT USER FOR NUMBER OF PLAYERS***************
 		while(valid) {
 			System.out.println("WELCOME TO RISK! LET'S PLAY!");
 			System.out.print("How many players? ");
@@ -62,17 +51,17 @@ public class Risk_Game {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
 			// Reading data using readLine
-			num_of_players = reader.readLine();
-			players = Integer.parseInt(num_of_players);
+			numOfPlayers = reader.readLine();
+			players = Integer.parseInt(numOfPlayers);
 
 			//CHECK IF NUMBER OF PLAYERS IS VALID
 			if(players > 1 && players < 7) {
 				valid = false;
 			} else {
 				if(players < 2) {
-					System.out.println(num_of_players + " is not enough players. Need at least 2.");
+					System.out.println(numOfPlayers + " is not enough players. Need at least 2.");
 				} else {
-					System.out.println(num_of_players + " is too many players. Can only have up to 6.");
+					System.out.println(numOfPlayers + " is too many players. Can only have up to 6.");
 				}
 				System.out.println("");
 			}
@@ -80,7 +69,6 @@ public class Risk_Game {
 
 		// CALLING METHOD THAT PUTS THE PLAYERS INTO A STRING ARRAY.
 		List<player> pList = new ArrayList<player>(players);
-		//String[][] participants = setupPlayers(players);
 
 		//READ IN LIST OF TERRITORIES FROM FILE
 		FileInputStream fstream = new FileInputStream("territory_list.txt");
@@ -125,7 +113,12 @@ public class Risk_Game {
 				pList.add(new player(x,20));
 			}
 		}
-
+		
+		//Update pList after entering names
+		for(int p = 0; p < playersN.size(); p++) {
+			pList.get(p).playerName = playersN.get(p);
+		}
+		
 		//FOR REFERENCE
 		System.out.println("\nAll players get " + pList.get(0).getnumofarmies() + " armies.");
 
@@ -151,6 +144,7 @@ public class Risk_Game {
 		 * 
 		 */
 		System.out.println("*PLAYERS, CLAIM YOUR TERRITORIES!*");
+		
 		//************************TERRITORY DRAFT BEGIN***************
 		/*****************************KNOWN ISSUES!!!!!
 		 * During Draft phase, empty strings throws an exception at the parseInt
@@ -172,7 +166,6 @@ public class Risk_Game {
 				Scanner in = new Scanner(System.in);
 				String selection = new String(in.nextLine());
 				for(int n = 0; n < numOfTerritories; n++){
-					//System.out.print(selection + " : " + tList[n].getnameofterritory() + "\n");
 					if((tList[n].getnameofterritory().equals(selection) || Integer.toString(tList[n].getTerritoryNumber()).equals(selection)) && !tList[n].isTaken()){
 						tList[n].setTaken(true);
 						tList[n].setOwner(currentPlayer);
@@ -184,7 +177,6 @@ public class Risk_Game {
 				if(noTerritorySelected){
 					System.out.print("Not a valid selection. Please Try again: ");
 				}
-				//in.close();
 			}
 			currentPlayer = (currentPlayer + 1) % players;
 			territoriesClaimed++;
@@ -207,7 +199,6 @@ public class Risk_Game {
 				Scanner in = new Scanner(System.in);
 				String selection = new String(in.nextLine());
 				for(int n = 0; n < numOfTerritories; n++){
-					//System.out.print(selection + " : " + tList[n].getnameofterritory() + "\n");
 					if((tList[n].getnameofterritory().equals(selection) || Integer.toString(tList[n].getTerritoryNumber()).equals(selection)) && tList[n].getOwner() == currentPlayer){
 						tList[n].addTokenToTerritory();
 						noTerritorySelected = false;
