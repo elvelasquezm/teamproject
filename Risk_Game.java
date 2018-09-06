@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.Scanner;
 
 /**
  * @author Derrick Ellis, Ezekiel , Jason
@@ -20,7 +21,7 @@ import java.io.InputStreamReader;
  * 
  */ 
 public class Risk_Game {
-
+	public static final int numOfTerritories = 42;
 	/**
 	 * @return 
 	 * 			
@@ -46,13 +47,13 @@ public class Risk_Game {
 	 * THIS IS USED ONCE IN THE MAIN METHOD AT THE START OF THE GAME
 	 * 
 	 */ 
-	public static String[][] setupPlayers(int numOfPlayers) {
-		String[][] listOfPlayers = new String[6][2];
-		for(int i = 1; i <= numOfPlayers; i++) {
-			listOfPlayers[i-1][1] = Integer.toString(i);
-		}
-		return listOfPlayers;
-	}
+//	public static String[][] setupPlayers(int numOfPlayers) {
+//		String[][] listOfPlayers = new String[6][2];
+//		for(int i = 1; i <= numOfPlayers; i++) {
+//			listOfPlayers[i-1][1] = Integer.toString(i);
+//		}
+//		return listOfPlayers;
+//	}
 
 	/**
 	 * MAIN METHOD
@@ -64,7 +65,7 @@ public class Risk_Game {
 		String num_of_players;
 		int players = 0;
 		boolean valid = true;
-		territory[] tList = new territory[42]; //list of all territories
+		territory[] tList = new territory[numOfTerritories]; //list of all territories
 
 		//START GAME. PROMPT USER FOR NUMBER OF PLAYERS
 		while(valid) {
@@ -93,7 +94,7 @@ public class Risk_Game {
 		
 		// CALLING METHOD THAT PUTS THE PLAYERS INTO A STRING ARRAY.
 		List<player> pList = new ArrayList<player>(players);
-		String[][] participants = setupPlayers(players);
+		//String[][] participants = setupPlayers(players);
 
 		//READ IN LIST OF TERRITORIES FROM FILE
 		FileInputStream fstream = new FileInputStream("territory_list.txt");
@@ -102,12 +103,13 @@ public class Risk_Game {
 		System.out.println("");
 		int count = 0;
 		while ((strLine = br.readLine()) != null)   {
-			tList[count] = new territory(strLine);
+			tList[count] = new territory(strLine, count + 1);
 			count++;
 		}
 		br.close();
 
 		//INITIALIZE GAME BOARD
+		@SuppressWarnings("unused")
 		board gameBoard = new board();
 
 		//GIVE OUT ARMIES BASED ON NUMBER OF PLAYERS
@@ -139,7 +141,7 @@ public class Risk_Game {
 		}
 
 		//FOR REFERENCE
-		System.out.println("All players get " + pList.get(0).getnumofarmies() + " armies.");
+		System.out.println("\nAll players get " + pList.get(0).getnumofarmies() + " armies.");
 
 		//DETERMINE THE ORDER OF PLAY
 		Collections.shuffle(pList);
@@ -152,34 +154,113 @@ public class Risk_Game {
 		TimeUnit.SECONDS.sleep(3);
 		System.out.print("\nThe order of play is: ");
 		for(int x = 0; x < players; x++) {
-			System.out.print(playerOrder.get(x).getplayernumber() + " ");
+			System.out.print(playerOrder.get(x).getPlayerName() + " ");
 		}
-
 		System.out.println("\n");
-		
+		TimeUnit.SECONDS.sleep(3);
 		/**
 		 * PLAYERS ARE CHOOSING THEIR TERRITORIES
 		 * CURRENTLY, THIS IS SIMULATING THE PLAYERS CHOOSING
 		 * BUT IN THE FUTURE, THIS WILL BE A USER INPUT PROCESS
 		 * 
-		 */ 
-		List<territory> notUsed = new ArrayList<territory>(); //list to keep track of which numbers where picked/used.
-		for(int i = 0; i < tList.length; i++) {
-			notUsed.add(tList[i]);
+		 */
+		//**********************DEPRECATED***************************** 
+		//List<territory> notUsed = new ArrayList<territory>(); //list to keep track of which numbers where picked/used.
+		//for(int i = 0; i < tList.length; i++) {
+		//	notUsed.add(tList[i]);
+		//}
+		//************************************************************
+		System.out.println("*PLAYERS, CLAIM YOUR TERRITORIES!*");
+		//************************TERRITORY DRAFT BEGIN***************
+		/*****************************KNOWN ISSUES!!!!!
+		 * During Draft phase, empty strings throws an exception at the parseInt
+		 * Need to fix drafting by name
+		 * Need to fix adding armies by number
+		 */
+		int currentPlayer = 0;
+		int territoriesClaimed = 0;
+		while(territoriesClaimed <= numOfTerritories - 1){
+			System.out.print("\n" + pList.get(currentPlayer).getPlayerName() +":\n");
+			for(int n = 0; n < numOfTerritories; n++){
+				if(!tList[n].isTaken()){
+					System.out.print(n+1 + ": " + tList[n].getnameofterritory() + "\n");
+				}
+			}
+			System.out.print("\nPlease choose a territory by NUMBER: ");
+			boolean noTerritorySelected = true;
+			while(noTerritorySelected){
+				Scanner in = new Scanner(System.in);
+				String selection = new String(in.nextLine());
+				for(int n = 0; n < numOfTerritories; n++){
+					//System.out.print(selection + " : " + tList[n].getnameofterritory() + "\n");
+					if((tList[n].getnameofterritory().equals(selection) || Integer.toString(tList[n].getTerritoryNumber()).equals(selection)) && !tList[n].isTaken()){
+						tList[n].setTaken(true);
+						tList[n].setOwner(currentPlayer);
+						tList[n].addTokenToTerritory();
+						noTerritorySelected = false;
+						pList.get(currentPlayer).reduceUnplacedArmies();
+					}
+				}
+				if(noTerritorySelected){
+					System.out.print("Not a valid selection. Please Try again: ");
+				}
+				//in.close();
+			}
+			currentPlayer = (currentPlayer + 1) % players;
+			territoriesClaimed++;
 		}
-		System.out.println("*PLAYERS ARE CLAIMING THEIR TERRITORIES.*"+"\nPLEASE WAIT...");
-		TimeUnit.SECONDS.sleep(5);
-		newArmies placedPieces = new newArmies();
-		placedPieces.setUpArmies(players, pList.get(0).getnumofarmies(), playerOrder, notUsed);
+		//Placing Remaining Armies Begin
+		System.out.print("\nAll territories claimed!\n");
+		int playersWithArmiesRemaining = 0;
+		while(playersWithArmiesRemaining != players){
+			System.out.print("\n" + pList.get(currentPlayer).getPlayerName() + "\'s owned territories: (Remaining Armies " + pList.get(currentPlayer).getUnplacedArmies() + ")\n");
+			System.out.print("Territory \t\t\t Number of Armies\n------------------------------------------------------------------\n");
+			for (int n = 0; n < numOfTerritories; n++){
+				if(tList[n].getOwner() == currentPlayer){
+					System.out.printf("%-30s %-30d", tList[n].getTerritoryNumber() + ": " + tList[n].getnameofterritory(), tList[n].getnumofarmies());
+					System.out.print("\n");
+				}
+			}
+			System.out.print("Choose a territory to add an army to: ");
+			boolean noTerritorySelected = true;
+			while(noTerritorySelected){
+				Scanner in = new Scanner(System.in);
+				String selection = new String(in.nextLine());
+				for(int n = 0; n < numOfTerritories; n++){
+					//System.out.print(selection + " : " + tList[n].getnameofterritory() + "\n");
+					if((tList[n].getnameofterritory().equals(selection) || Integer.toString(tList[n].getTerritoryNumber()).equals(selection)) && tList[n].getOwner() == currentPlayer){
+						tList[n].addTokenToTerritory();
+						noTerritorySelected = false;
+						pList.get(currentPlayer).reduceUnplacedArmies();
+					}
+				}
+				if(noTerritorySelected){
+					System.out.print("Not a valid selection. Please Try again: ");
+				}
+				//in.close();
+			}
+			currentPlayer = (currentPlayer + 1) % players;
+			playersWithArmiesRemaining = 0;
+			for(int n = 0; n < players; n++){
+				if(pList.get(n).getUnplacedArmies() == 0){
+					playersWithArmiesRemaining++;
+				}
+			}
+			
+		}
+		//Placing Remaining Armies End
+		//************************TERRITORY DRAFT END*****************
+		//**********************DEPRECATED***************************** 
+		//newArmies placedPieces = new newArmies();
+		//placedPieces.setUpArmies(players, pList.get(0).getnumofarmies(), playerOrder, notUsed);
 		
+
 		//UPDATE tList
-		for(int i = 0; i < tList.length; i++) {
-			tList[i] = notUsed.get(i);
-		}
-
-		//CHECK OWNERSHIP OF TERRITORIES
-
-		//System.out.println("");
+		//for(int i = 0; i < tList.length; i++) {
+		//	tList[i] = notUsed.get(i);
+		//}
+		//*************************************************************
+		System.out.println("\nAll armies have been placed.\nNow let's begin!");
 		
 	}
 		
