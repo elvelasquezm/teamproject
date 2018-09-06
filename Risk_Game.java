@@ -41,26 +41,12 @@ public class Risk_Game {
 	@ ensures 
 	@*/
 
-
-	/**
-	 * METHOD THAT PUTS THE PLAYERS INTO A STRING ARRAY.
-	 * THIS IS USED ONCE IN THE MAIN METHOD AT THE START OF THE GAME
-	 * 
-	 */ 
-//	public static String[][] setupPlayers(int numOfPlayers) {
-//		String[][] listOfPlayers = new String[6][2];
-//		for(int i = 1; i <= numOfPlayers; i++) {
-//			listOfPlayers[i-1][1] = Integer.toString(i);
-//		}
-//		return listOfPlayers;
-//	}
-
 	/**
 	 * MAIN METHOD
 	 * 
 	 */ 
 	public static void main(String[] args) throws Exception{
-		
+
 		//ESTABLISH MAIN VARIABLES
 		String num_of_players;
 		int players = 0;
@@ -78,7 +64,7 @@ public class Risk_Game {
 			// Reading data using readLine
 			num_of_players = reader.readLine();
 			players = Integer.parseInt(num_of_players);
-			
+
 			//CHECK IF NUMBER OF PLAYERS IS VALID
 			if(players > 1 && players < 7) {
 				valid = false;
@@ -91,7 +77,7 @@ public class Risk_Game {
 				System.out.println("");
 			}
 		}
-		
+
 		// CALLING METHOD THAT PUTS THE PLAYERS INTO A STRING ARRAY.
 		List<player> pList = new ArrayList<player>(players);
 		//String[][] participants = setupPlayers(players);
@@ -164,12 +150,6 @@ public class Risk_Game {
 		 * BUT IN THE FUTURE, THIS WILL BE A USER INPUT PROCESS
 		 * 
 		 */
-		//**********************DEPRECATED***************************** 
-		//List<territory> notUsed = new ArrayList<territory>(); //list to keep track of which numbers where picked/used.
-		//for(int i = 0; i < tList.length; i++) {
-		//	notUsed.add(tList[i]);
-		//}
-		//************************************************************
 		System.out.println("*PLAYERS, CLAIM YOUR TERRITORIES!*");
 		//************************TERRITORY DRAFT BEGIN***************
 		/*****************************KNOWN ISSUES!!!!!
@@ -246,22 +226,46 @@ public class Risk_Game {
 					playersWithArmiesRemaining++;
 				}
 			}
-			
+
 		}
 		//Placing Remaining Armies End
 		//************************TERRITORY DRAFT END*****************
-		//**********************DEPRECATED***************************** 
-		//newArmies placedPieces = new newArmies();
-		//placedPieces.setUpArmies(players, pList.get(0).getnumofarmies(), playerOrder, notUsed);
-		
 
-		//UPDATE tList
-		//for(int i = 0; i < tList.length; i++) {
-		//	tList[i] = notUsed.get(i);
-		//}
-		//*************************************************************
 		System.out.println("\nAll armies have been placed.\nNow let's begin!");
-		
+
+		//********************GAMEPLAY BEGINS****************************
+		String optionNumber;
+		boolean weHaveAWinner = false;
+		while(weHaveAWinner == false) {
+			for(player p : pList) {
+				playerTurn pT = new playerTurn(p);
+				System.out.println(p.getPlayerName()+", what would you like to do? CHOOSE NUMBER\n");
+				p.getPlayerOptions();
+
+				//Enter data using BufferReader
+				BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
+				// Reading data using readLine
+				optionNumber = reader.readLine();
+
+				for(int i = 0; i < p.playerOptions.length; i++) {
+					if(optionNumber == p.playerOptions[i][0]) {
+						if(optionNumber == "1") {
+							//ATTACK
+							p.attack();
+						}
+						if(optionNumber == "2") {
+							//REINFORCE
+							p.reinforce();
+						}
+						break;
+					}
+				}
+
+			}
+		}
+
+
 	}
-		
-	}
+
+}
