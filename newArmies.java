@@ -26,7 +26,7 @@ public class newArmies {
 		//int nextTerr = 0;
 		for(territory t : dummyList) {
 			pList.get(count).chooseTerritory(t);
-			t.setOwner(pList.get(count).player_no);
+			t.setOwner(pList.get(count).playerNo);
 			t.setTaken(true);
 			//t.addTokenToTerritory();
 			count++;
