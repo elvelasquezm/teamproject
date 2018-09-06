@@ -3,48 +3,64 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * Player class has lots of methods. lol
+ * 
  * 
  */
 public class player {
 
-	public int player_no;
-	public int terr_owned = 0;
+	public int playerNo;
+	public int terrOwned = 0;
 	String playerName = new String("");
 	int unplacedArmies;
-	int num_of_dice_rolls;
-	int num_of_armies;
-	int num_of_cards;
+	int numOfDiceRolls;
+	int numOfArmies;
+	int numOfCards;
 	
-	boolean can_trade;
-	boolean won_whole_game;
+	boolean canTrade;
+	boolean wonWholeGame;
 	boolean eliminated;
 	boolean win;
 	boolean lose;
-	boolean own_this_terr;
+	boolean ownThisTerr;
 	boolean canAttack;
 	boolean isAttacking;
 	boolean isDefending;
 	boolean canDefend;
 	
-	List<Object> adj_terr = new ArrayList<Object>();
-	List<Object> cards_held = new ArrayList<Object>();
-	public List<territory> territories_owned = new ArrayList<territory>();
+	String[][] playerOptions = new String[2][2];
+	List<Object> adjTerr = new ArrayList<Object>();
+	List<Object> cardsHeld = new ArrayList<Object>();
+	public List<territory> territoriesOwned = new ArrayList<territory>();
 	
 	//////////CONSTRUCTORS//////////////////
 	public player(int num) {
-		this.player_no = num;
-		System.out.print("Player " + this.player_no + " please enter your name: ");
+		this.playerNo = num;
+		System.out.print("Player " + this.playerNo + " please enter your name: ");
 		Scanner in = new Scanner(System.in);
 		this.playerName = in.nextLine();
+		if(!Risk_Game.playersN.contains(this.playerName)) {
+			Risk_Game.playersN.add(this.playerName);
+		}
+		else {
+			System.out.println("****Cannot have duplicate player names.****");
+			new player(this.playerNo);
+		}
     }
 	public player(int num, int numArmies) {
-        this.player_no = num;
-		this.num_of_armies = numArmies;
-		System.out.print("Player " + this.player_no + " please enter your name: ");
+        this.playerNo = num;
+		this.numOfArmies = numArmies;
+		System.out.print("Player " + this.playerNo + " please enter your name: ");
 		Scanner in = new Scanner(System.in);
-		this.playerName = in.nextLine();
+		playerName = in.nextLine();
 		this.unplacedArmies = numArmies;
+		if(!Risk_Game.playersN.contains(playerName)) {
+			Risk_Game.playersN.add(playerName);
+		}
+		else {
+			System.out.println("****Cannot have duplicate player names.****");
+			this.playerName = "";
+			new player( this.playerNo , this.numOfArmies);
+		}
     }
 	////////////////////////////////////////
 	
@@ -53,7 +69,7 @@ public class player {
 	 * 
 	 */
 	public int getplayernumber() {
-		return this.player_no;
+		return this.playerNo;
 	}
 
 	public void reduceUnplacedArmies(){
@@ -70,50 +86,50 @@ public class player {
 
 	//territories
 	public void setnumofterritories(int n) {
-		this.terr_owned = n;
+		this.terrOwned = n;
 	}
 	public int getnumofterritories() {
-		return this.terr_owned;
+		return this.terrOwned;
 	}
 	
 	//dice rolls
 	public void setnumofdicerolls(int n) {
-		this.num_of_dice_rolls = n;
+		this.numOfDiceRolls = n;
 	}
 	public int getnumofdicerolls() {
-		return this.num_of_dice_rolls;
+		return this.numOfDiceRolls;
 	}
 	
 	//armies
 	public void setnumofarmies(int n) {
-		this.num_of_armies = n;
+		this.numOfArmies = n;
 	}
 	public int getnumofarmies() {
-		return this.num_of_armies;
+		return this.numOfArmies;
 	}
 	
 	//give player a certain number of cards
 	public void setnumofcards(int n) {
-		this.num_of_cards = n;
+		this.numOfCards = n;
 	}
 	public int getnumofcards() {
-		return this.num_of_cards;
+		return this.numOfCards;
 	}
 	
 	//set "can trade" status
 	public void setCanTrade(boolean trade) {
-		this.can_trade = trade;
+		this.canTrade = trade;
 	}
 	public boolean canTrade() {
-		return this.can_trade;
+		return this.canTrade;
 	}
 	
 	//won entire game
 	public void setWinner(boolean winner) {
-		this.won_whole_game = winner;
+		this.wonWholeGame = winner;
 	}
 	public boolean getWinner() {
-		return this.won_whole_game;
+		return this.wonWholeGame;
 	}
 	
 	//when player is eliminated from game
@@ -139,7 +155,7 @@ public class player {
 
 	//own this territory?
 	public boolean ownthisterritory(territory terr) {
-		if(terr.isOwnedBy == this.player_no) {
+		if(terr.isOwnedBy == this.playerNo) {
 			return true;
 		} else return false;
 	}
@@ -147,7 +163,7 @@ public class player {
 	//if adjacent territory can be attacked.
 	//(it might be better to move this method to territory class)
 	public void canAttack(territory terr) {
-		if(terr.isOwnedBy != this.player_no) {
+		if(terr.isOwnedBy != this.playerNo) {
 			this.canAttack = true;
 		} else this.canAttack = false;
 	}
@@ -175,35 +191,52 @@ public class player {
 		return this.isDefending;
 	}
 	
-	public void continue_attacking() {
+	public void continueAttacking() {
 		this.isAttacking = true;
 	}
 	
 	//CHOOSE TERRITORY
 	public void chooseTerritory(territory choose) {
-		this.territories_owned.add(choose);
-		this.terr_owned = terr_owned + 1;
-		choose.setOwner(player_no);
+		this.territoriesOwned.add(choose);
+		this.terrOwned = terrOwned + 1;
+		choose.setOwner(playerNo);
 	}
 	
 	//ADD ONE TOKEN/ARMY TO TERRITORY
 	public void addTokenToTerritory(territory t) {
 		t.addTokenToTerritory();
-		t.setOwner(player_no);
+		t.setOwner(playerNo);
 		t.setTaken(true);
 	}
 	//ADD SPECIFIED # OF TOKENS/ARMIES TO TERRITORY t
 	public void addTokensToTerritory(territory t, int tokens) {
 		t.addTokensToTerritory(tokens);
-		t.setOwner(player_no);
+		t.setOwner(playerNo);
 		t.setTaken(true);
 	}
 	
 	//PRINT TERRITORIES THAT THE PLAYER OWNS
 	public void printTerritories() {
-		System.out.print("\nPlayer "+player_no+" owns: ");
-		for(int x = 0; x < territories_owned.size(); x++) {
-			System.out.print(territories_owned.get(x).name+", ");
+		System.out.print("\nPlayer "+playerNo+" owns: ");
+		for(int x = 0; x < territoriesOwned.size(); x++) {
+			System.out.print(territoriesOwned.get(x).name+", ");
+		}
+	}
+	
+	public void getPlayerOptions() {
+		/**
+		 * If adjacent territory is owned by someone else
+		 */
+		playerOptions[0][0] = "1";
+		playerOptions[0][1] = "Attack enemy";
+		/**
+		 * 
+		 */
+		playerOptions[1][0] = "2";
+		playerOptions[1][1] = "Reinforce territory";
+		
+		for(int i = 0; i < playerOptions.length; i++) {
+			System.out.println(playerOptions[i][0]+": "+playerOptions[i][1]);
 		}
 	}
 	
@@ -211,15 +244,15 @@ public class player {
 		
 	}
 	
-	public void place_army() {
+	public void placeArmy() {
 		
 	}
 	
-	public void trade_cards() {
+	public void tradeCards() {
 		
 	}
 	
-	public void pick_card() {
+	public void pickCard() {
 		
 	}
 	
@@ -228,6 +261,10 @@ public class player {
 	}
 	
 	public void defend() {
-		
+
+	}
+
+	public void reinforce() {
+
 	}
 }
