@@ -1,14 +1,17 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 /**
- * Player class has lots of methods. lol
+ * 
  * 
  */
 public class player {
 
 	public int player_no;
 	public int terr_owned = 0;
+	String playerName = new String("");
+	int unplacedArmies;
 	int num_of_dice_rolls;
 	int num_of_armies;
 	int num_of_cards;
@@ -24,17 +27,25 @@ public class player {
 	boolean isDefending;
 	boolean canDefend;
 	
+	String[][] playerOptions = new String[2][2];
 	List<Object> adj_terr = new ArrayList<Object>();
 	List<Object> cards_held = new ArrayList<Object>();
 	public List<territory> territories_owned = new ArrayList<territory>();
 	
 	//////////CONSTRUCTORS//////////////////
 	public player(int num) {
-        this.player_no = num;
+		this.player_no = num;
+		System.out.print("Player " + this.player_no + " please enter your name: ");
+		Scanner in = new Scanner(System.in);
+		this.playerName = in.nextLine();
     }
 	public player(int num, int numArmies) {
         this.player_no = num;
-        this.num_of_armies = numArmies;
+		this.num_of_armies = numArmies;
+		System.out.print("Player " + this.player_no + " please enter your name: ");
+		Scanner in = new Scanner(System.in);
+		this.playerName = in.nextLine();
+		this.unplacedArmies = numArmies;
     }
 	////////////////////////////////////////
 	
@@ -45,7 +56,19 @@ public class player {
 	public int getplayernumber() {
 		return this.player_no;
 	}
+
+	public void reduceUnplacedArmies(){
+		this.unplacedArmies--;
+	}
+
+	public int getUnplacedArmies(){
+		return this.unplacedArmies;
+	}
 	
+	public String getPlayerName(){
+		return this.playerName;
+	}
+
 	//territories
 	public void setnumofterritories(int n) {
 		this.terr_owned = n;
@@ -185,6 +208,23 @@ public class player {
 		}
 	}
 	
+	public void getPlayerOptions() {
+		/**
+		 * If adjacent territory is owned by someone else
+		 */
+		playerOptions[0][0] = "1";
+		playerOptions[0][1] = "Attack enemy";
+		/**
+		 * 
+		 */
+		playerOptions[1][0] = "2";
+		playerOptions[1][1] = "Reinforce territory";
+		
+		for(int i = 0; i < playerOptions.length; i++) {
+			System.out.print(playerOptions[i][0]+": "+playerOptions[i][1]+" ");
+		}
+	}
+	
 	public void rolldice() {
 		
 	}
@@ -206,6 +246,10 @@ public class player {
 	}
 	
 	public void defend() {
-		
+
+	}
+
+	public void reinforce() {
+
 	}
 }
