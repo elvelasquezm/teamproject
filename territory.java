@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 public class territory {
 
 	int num_of_territories = 42;
+	int territoryNumber;
 	String name;
 	int numofArmiesHere = 0;
 	boolean isTaken = false;
@@ -26,9 +27,9 @@ public class territory {
 		this.numofArmiesHere = armies;
 		this.isOwnedBy = player;
 	}
-	public territory(String name, int player) {
+	public territory(String name, int num) {
 		this.name = name;
-		this.isOwnedBy = player;
+		this.territoryNumber = num;
 	}
 	public territory(String name) {
 		this.name = name;
@@ -40,6 +41,9 @@ public class territory {
 	 * METHODS
 	 */
 	//name
+	public int getTerritoryNumber(){
+		return this.territoryNumber;
+	}
 	public void setnameofterritory(String territory) {
 		this.name = territory;
 	}
