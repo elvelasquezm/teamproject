@@ -221,7 +221,7 @@ public class player {
 		playerOptions[1][1] = "Reinforce territory";
 		
 		for(int i = 0; i < playerOptions.length; i++) {
-			System.out.print(playerOptions[i][0]+": "+playerOptions[i][1]+" ");
+			System.out.println(playerOptions[i][0]+": "+playerOptions[i][1]);
 		}
 	}
 	
